@@ -28,6 +28,7 @@
     const categorySelect = document.getElementById("categorySelect");
     const channelSelect = document.getElementById("channelSelect");
     const video = document.getElementById("player");
+    let hls;
 
     function loadChannels(cat) {
       channelSelect.innerHTML = "";
@@ -41,8 +42,15 @@
 
     function playSelected() {
       let url = channelSelect.value;
+      if (hls) {
+        hls.destroy(); // Réinitialiser pour éviter les doublons
+      }
       if (Hls.isSupported()) {
-        const hls = new Hls();
+        hls = new Hls({
+          maxBufferLength: 60,      // garder 60s de vidéo en mémoire
+          maxMaxBufferLength: 120,  // max 120s si dispo
+          liveSyncDuration: 10      // réduire la latence
+        });
         hls.loadSource(url);
         hls.attachMedia(video);
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -63,6 +71,11 @@
         });
         loadChannels(Object.keys(channelsData)[0]); // Charger première catégorie
       });
+
+    // Relancer la lecture si la catégorie change
+    categorySelect.addEventListener("change", () => {
+      loadChannels(categorySelect.value);
+    });
   </script>
 </body>
 </html>
