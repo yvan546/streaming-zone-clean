@@ -37,7 +37,7 @@ app.get('/watch/:token', (req, res) => {
   res.sendFile(path.join(__dirname, 'watch.html'));
 });
 
-// Proxy vers tv.garden
+// Proxy optimisé : uniquement certaines ressources de tv.garden
 app.use(
   '/tv',
   createProxyMiddleware({
@@ -45,11 +45,24 @@ app.use(
     changeOrigin: true,
     pathRewrite: { '^/tv': '' },
     onProxyRes: (proxyRes) => {
-      // Supprimer les en-têtes qui bloquent l’iframe
+      // Supprimer les headers qui bloquent l’iframe
       delete proxyRes.headers['x-frame-options'];
       delete proxyRes.headers['content-security-policy'];
     },
+    onProxyReq: (proxyReq, req) => {
+      const url = req.url;
+
+      // Autoriser uniquement les pages principales + flux + scripts/css/images
+      const allowed =
+        url.match(/\.(m3u8|mp4|js|css|png|jpg|jpeg|gif|webp|svg)$/) ||
+        url === '/' ||
+        url.startsWith('/live');
+
+      if (!allowed) {
+        proxyReq.abort(); // bloque les ressources inutiles
+      }
+    }
   })
 );
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

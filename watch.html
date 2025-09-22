@@ -19,14 +19,14 @@
       height: 100%;
       border: none;
     }
-    /* Barre de camouflage en haut de l’iframe */
+    /* Bande noire pour masquer l'entête tv.garden */
     #mask {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 70px; /* ajuste selon la hauteur de l'entête de tv.garden */
-      background: #000; /* même couleur que le fond pour masquer */
+      height: 70px;
+      background: #000;
       z-index: 2;
     }
     #timer {
@@ -42,7 +42,7 @@
 </head>
 <body>
   <div id="container">
-    <!-- Ici on passe par le proxy Render défini dans server.js -->
+    <!-- On appelle /tv au lieu de https://tv.garden -->
     <iframe id="player" src="/tv" allowfullscreen></iframe>
     <div id="mask"></div>
     <p id="timer">Temps restant : 60s</p>
@@ -59,7 +59,8 @@
 
       if (seconds <= 0) {
         clearInterval(countdown);
-        container.innerHTML = "<h1 style='color:white;text-align:center;margin-top:40vh'>⛔ Accès expiré</h1>";
+        container.innerHTML =
+          "<h1 style='color:white;text-align:center;margin-top:40vh'>⛔ Accès expiré</h1>";
       }
     }, 1000);
   </script>
