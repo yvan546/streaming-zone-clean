@@ -42,7 +42,8 @@
 </head>
 <body>
   <div id="container">
-    <iframe id="player" src="https://www.besoccer.com" allowfullscreen></iframe>
+    <!-- Ici on passe par le proxy Render défini dans server.js -->
+    <iframe id="player" src="/tv" allowfullscreen></iframe>
     <div id="mask"></div>
     <p id="timer">Temps restant : 60s</p>
   </div>
